@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'main.dart';
 
 class LearnFlutterPage extends StatefulWidget {
   const LearnFlutterPage({super.key});
