@@ -1,11 +1,82 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from sqlalchemy.dialects.postgresql import ARRAY
+import os
+
+from dotenv import load_dotenv
+load_dotenv()  # Carrega variáveis do .env
 
 app = Flask(__name__)
 CORS(app)
 
-# Realizando testes para conectar a minha API no meu aplicativo
+#Configurando o Banco de dados para acessar a URL certa
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')  # Use variáveis de ambiente!
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Inicializa o banco e o sistema de migrações.
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+
+
+# Modelo de exemplo (substitua pelo seu)
+class Usuario(db.Model):
+    __tablename__ = 'usuario'
+    IdUsuario = db.Column(db.Integer, primary_key=True)
+    Email = db.Column(db.String(120), unique=True, nullable=False)
+    Senha = db.Column(db.String(200), nullable=False)
+    NomeUsuario = db.Column(db.String(80), nullable=False)
+    EstiloTreino = db.Column(db.Integer)
+    DiasAtivos = db.Column(ARRAY(db.String(10)))  # Ex: ['seg', 'ter']
+
+    # Relacionamentos
+    treinos = db.relationship('Treino', backref='usuario')
+    dias_treino = db.relationship('DiaTreino', backref='usuario')
+
+class Treino(db.Model):
+    __tablename__ = 'treino'
+    IdTreino = db.Column(db.Integer, primary_key=True)
+    NomeTreino = db.Column(db.String(100), nullable=False)
+    IdUsuario = db.Column(db.Integer, db.ForeignKey('usuario.IdUsuario'), nullable=False)
+    IdExercicios = db.Column(ARRAY(db.Integer))  # Lista de IDs de exercícios
+    DiaSemana = db.Column(db.String(10))  # Ex: 'segunda'
+
+    # Relacionamento com DiaTreino
+    dias_treino = db.relationship('DiaTreino', backref='treino')
+
+class DiaTreino(db.Model):
+    __tablename__ = 'diatreino'
+    IdDiaTreino = db.Column(db.Integer, primary_key=True)
+    IdTreino = db.Column(db.Integer, db.ForeignKey('treino.IdTreino'), nullable=False)
+    IdUsuario = db.Column(db.Integer, db.ForeignKey('usuario.IdUsuario'), nullable=False)
+    DataTreino = db.Column(db.Date, nullable=False)
+
+    # Relacionamento com ExercicioTreino
+    exercicios = db.relationship('ExercicioTreino', backref='diatreino')
+
+class Exercicio(db.Model):
+    __tablename__ = 'exercicio'
+    IdExercicio = db.Column(db.Integer, primary_key=True)
+    NomeExercicio = db.Column(db.String(100), nullable=False)
+    Grupamento = db.Column(db.String(50))  # Ex: 'Peito', 'Costas'
+
+    # Relacionamento com ExercicioTreino
+    treinos = db.relationship('ExercicioTreino', backref='exercicio')
+
+class ExercicioTreino(db.Model):
+    __tablename__ = 'exerciciotreino'
+    IdExercicioTreino = db.Column(db.Integer, primary_key=True)
+    IdExercicio = db.Column(db.Integer, db.ForeignKey('exercicio.IdExercicio'), nullable=False)
+    IdDiaTreino = db.Column(db.Integer, db.ForeignKey('diatreino.IdDiaTreino'), nullable=False)
+    Cargas = db.Column(ARRAY(db.Integer))  # Ex: [50, 55, 60]
+    Repeticoes = db.Column(ARRAY(db.Integer))  # Ex: [12, 10, 8]
+
+
+
+
+# Realizando testes para conectar a minha API no meu aplicativo
 @app.route('/api/palavra', methods=['GET']) 
 def getPalavra():
     return "tijolo"
