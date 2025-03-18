@@ -81,5 +81,52 @@ class ExercicioTreino(db.Model):
 def getPalavra():
     return "tijolo"
 
+@app.route('/api/usuario', methods=['POST']) 
+def postUsuario():
+    # Obter dados do corpo da requisição
+    dados = request.get_json()
+    
+    # Verificar se todos os campos obrigatórios estão presentes
+    campos_obrigatorios = ['Email', 'Senha', 'NomeUsuario']
+    for campo in campos_obrigatorios:
+        if campo not in dados:
+            return jsonify({'erro': f'Campo obrigatório ausente: {campo}'}), 400
+    
+    # Verificar se o email já existe
+    usuario_existente = Usuario.query.filter_by(Email=dados['Email']).first()
+    if usuario_existente:
+        return jsonify({'erro': 'Email já cadastrado'}), 409
+    
+    # Criar novo usuário
+    novo_usuario = Usuario(
+        Email=dados['Email'],
+        Senha=dados['Senha'],  # Nota: Em produção, é importante hash+salt a senha
+        NomeUsuario=dados['NomeUsuario'],
+        EstiloTreino=dados.get('EstiloTreino'),  # Campos opcionais usam .get()
+        DiasAtivos=dados.get('DiasAtivos', [])
+    )
+    
+    try:
+        # Adicionar ao banco e confirmar transação
+        db.session.add(novo_usuario)
+        db.session.commit()
+        
+        # Retornar dados do usuário criado (exceto senha)
+        return jsonify({
+            'sucesso': True,
+            'usuario': {
+                'IdUsuario': novo_usuario.IdUsuario,
+                'Email': novo_usuario.Email,
+                'NomeUsuario': novo_usuario.NomeUsuario,
+                'EstiloTreino': novo_usuario.EstiloTreino,
+                'DiasAtivos': novo_usuario.DiasAtivos
+            }
+        }), 201
+    except Exception as e:
+        # Desfazer transação em caso de erro
+        db.session.rollback()
+        return jsonify({'erro': f'Erro ao cadastrar usuário: {str(e)}'}), 500
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=True)  # Porta 3000
