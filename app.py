@@ -128,5 +128,39 @@ def postUsuario():
         return jsonify({'erro': f'Erro ao cadastrar usuário: {str(e)}'}), 500
 
 
+@app.route('/api/login', methods=['POST'])
+def getLogin():
+    
+    dados = request.get_json()  # Recebe dados via body (mais seguro)
+
+    if not dados or 'Email' not in dados or 'Senha' not in dados:
+        return jsonify({'erro': 'Credenciais ausentes'}), 400
+
+    email = dados['Email']
+    senha = dados['Senha']
+
+    try:
+        usuario = Usuario.query.filter_by(Email=email).first()
+
+        if usuario is None:
+            return jsonify({'erro': 'Usuário não encontrado'}), 404
+        
+        if usuario.Senha != senha:
+            return jsonify({'erro': 'Senha incorreta'}), 401
+        
+        return jsonify({
+            'sucesso': True,
+            'usuario': {
+                'id': usuario.IdUsuario,
+                'nome': usuario.NomeUsuario,
+                'email': usuario.Email
+                # Nunca retorne a senha!
+            }
+        }), 200  # Código 200 para sucesso
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'erro': f'Erro ao cadastrar usuário: {str(e)}'}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=True)  # Porta 3000

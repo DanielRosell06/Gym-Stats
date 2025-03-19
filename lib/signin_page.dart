@@ -12,34 +12,51 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _confirmarSenhaController = TextEditingController();
+  final TextEditingController _confirmarSenhaController =
+      TextEditingController();
   final TextEditingController _idadeController = TextEditingController();
 
   // Variáveis para armazenar os valores selecionados
   int _estiloTreino = 0; // 0 = por dia, 1 = sequencial
   bool _treinaTodosDias = false;
-  
+
   // Dias da semana
-  final List<String> _diasSemana = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
-  final List<String> _diasSemanaCompleto = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+  final List<String> _diasSemana = [
+    'seg',
+    'ter',
+    'qua',
+    'qui',
+    'sex',
+    'sab',
+    'dom',
+  ];
+  final List<String> _diasSemanaCompleto = [
+    'Segunda',
+    'Terça',
+    'Quarta',
+    'Quinta',
+    'Sexta',
+    'Sábado',
+    'Domingo',
+  ];
   Map<String, bool> _diasSelecionados = {
-    'seg': false, 
-    'ter': false, 
-    'qua': false, 
-    'qui': false, 
-    'sex': false, 
-    'sab': false, 
-    'dom': false
+    'seg': false,
+    'ter': false,
+    'qua': false,
+    'qui': false,
+    'sex': false,
+    'sab': false,
+    'dom': false,
   };
 
   // Variável para controlar o estado de carregamento
   bool _isLoading = false;
-  
+
   // Método para atualizar os dias selecionados quando a checkbox for marcada
   void _atualizarDiasSelecionados(bool value) {
     setState(() {
       _treinaTodosDias = value;
-      
+
       // Se marcou "Não treina em dias específicos"
       if (value) {
         // Marcar todos os dias da semana
@@ -88,7 +105,7 @@ class _RegisterPageState extends State<RegisterPage> {
       'Email': _emailController.text,
       'Senha': _senhaController.text,
       'EstiloTreino': _estiloTreino,
-      'DiasAtivos': diasAtivos
+      'DiasAtivos': diasAtivos,
     };
 
     setState(() {
@@ -98,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       // Enviar requisição POST para a API
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/api/usuario'),
+        Uri.parse('http://127.0.0.1:3000/api/usuario'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -210,14 +227,14 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   SizedBox(height: 24),
-                  
+
                   // Seção de Estilo de Treino
                   Text(
                     'Estilo de Treino',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8),
-                  
+
                   // Opção de "Não treina em dias específicos"
                   CheckboxListTile(
                     title: Text('Não treino em dias específicos'),
@@ -228,17 +245,20 @@ class _RegisterPageState extends State<RegisterPage> {
                     contentPadding: EdgeInsets.zero,
                     controlAffinity: ListTileControlAffinity.leading,
                   ),
-                  
+
                   // Opções de estilo de treino
                   RadioListTile<int>(
                     title: Text('Treino por dia da semana'),
                     value: 0,
                     groupValue: _estiloTreino,
-                    onChanged: _treinaTodosDias ? null : (value) {
-                      setState(() {
-                        _estiloTreino = value!;
-                      });
-                    },
+                    onChanged:
+                        _treinaTodosDias
+                            ? null
+                            : (value) {
+                              setState(() {
+                                _estiloTreino = value!;
+                              });
+                            },
                   ),
                   RadioListTile<int>(
                     title: Text('Treino sequencial'),
@@ -251,14 +271,14 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                   ),
                   SizedBox(height: 16),
-                  
+
                   // Seção de Dias de Treino
                   Text(
                     'Dias de Treino',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8),
-                  
+
                   // Lista de dias da semana
                   Wrap(
                     spacing: 8.0,
@@ -274,20 +294,23 @@ class _RegisterPageState extends State<RegisterPage> {
                             });
                           }
                         },
-                        selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                        selectedColor: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.3),
                         checkmarkColor: Theme.of(context).colorScheme.primary,
                       );
                     }),
                   ),
                   SizedBox(height: 24),
-                  
+
                   // Botão de cadastro
                   _isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : ElevatedButton(
+                      ? Center(child: CircularProgressIndicator())
+                      : ElevatedButton(
                         onPressed: _cadastrarUsuario,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           padding: EdgeInsets.symmetric(vertical: 12),
                           minimumSize: Size(double.infinity, 0),
                           shape: RoundedRectangleBorder(
@@ -303,7 +326,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                   SizedBox(height: 16),
-                  
+
                   // Link para login
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

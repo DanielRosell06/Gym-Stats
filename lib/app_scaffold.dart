@@ -1,6 +1,7 @@
 // Agora, modifique a classe AppScaffold para gerenciar a navegação
 import 'package:flutter/material.dart';
 import 'package:gym_stats/signin_page.dart';
+import 'package:gym_stats/login_page.dart';
 import 'package:provider/provider.dart';
 import 'theme_provider.dart';
 import 'home-page.dart';
@@ -9,11 +10,7 @@ class AppScaffold extends StatefulWidget {
   final Widget body;
   final String title;
 
-  const AppScaffold({
-    super.key,
-    required this.body,
-    required this.title,
-  });
+  const AppScaffold({super.key, required this.body, required this.title});
 
   @override
   State<AppScaffold> createState() => _AppScaffoldState();
@@ -51,6 +48,8 @@ class _AppScaffoldState extends State<AppScaffold> {
     switch (index) {
       case 0:
         return HomeContent();
+      case 1:
+        return LoginPage();
       case 3: // Assumindo que o botão Conta seja o índice 3
         return RegisterPage();
       default:
@@ -73,9 +72,10 @@ class _AppScaffoldState extends State<AppScaffold> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     bool isDarkMode = themeProvider.themeMode == ThemeMode.dark;
-    final appBarColor = isDarkMode 
-        ? Color(0xFF121212).withOpacity(_scrollOpacity) 
-        : Colors.white.withOpacity(_scrollOpacity);
+    final appBarColor =
+        isDarkMode
+            ? Color(0xFF121212).withOpacity(_scrollOpacity)
+            : Colors.white.withOpacity(_scrollOpacity);
 
     return Scaffold(
       body: Stack(
@@ -135,11 +135,14 @@ class _AppScaffoldState extends State<AppScaffold> {
           });
         },
       ),
-      floatingActionButton: _currentIndex == 0 ? FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: Icon(Icons.add),
-      ) : null,
+      floatingActionButton:
+          _currentIndex == 0
+              ? FloatingActionButton(
+                onPressed: () {},
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: Icon(Icons.add),
+              )
+              : null,
     );
   }
 }
@@ -160,7 +163,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDarkMode ? Color(0xFF1E1E1E) : Colors.white;
     final selectedItemColor = Theme.of(context).colorScheme.primary;
-    final unselectedItemColor = isDarkMode ? Colors.grey[400] : Colors.grey[600];
+    final unselectedItemColor =
+        isDarkMode ? Colors.grey[400] : Colors.grey[600];
 
     return Container(
       decoration: BoxDecoration(
@@ -183,10 +187,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         showSelectedLabels: true,
         showUnselectedLabels: true,
         items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Início',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
           BottomNavigationBarItem(
             icon: Icon(Icons.fitness_center),
             label: 'Treinos',
