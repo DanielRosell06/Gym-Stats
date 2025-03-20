@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_stats/signin_page.dart';
 import 'package:gym_stats/login_page.dart';
+import 'package:gym_stats/add_training.dart';
 import 'package:provider/provider.dart';
 import 'theme_provider.dart';
 import 'home-page.dart';
@@ -50,6 +51,8 @@ class _AppScaffoldState extends State<AppScaffold> {
         return HomeContent();
       case 1:
         return LoginPage();
+      case 2:
+        return WorkoutRegistrationPage();
       case 3: // Assumindo que o botão Conta seja o índice 3
         return RegisterPage();
       default:
