@@ -62,150 +62,152 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Icon(
-            Icons.fitness_center,
-            size: 80,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          SizedBox(height: 16),
-          Text(
-            'Bem-vindo de volta!',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Faça login para continuar',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-          ),
-          SizedBox(height: 32),
-          Card(
-            margin: EdgeInsets.symmetric(horizontal: 16),
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  TextField(
-                    controller: _senhaController,
-                    obscureText: !_mostrarSenha,
-                    decoration: InputDecoration(
-                      labelText: 'Senha',
-                      prefixIcon: Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _mostrarSenha
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Icon(
+              Icons.fitness_center,
+              size: 80,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Bem-vindo de volta!',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Faça login para continuar',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+            SizedBox(height: 32),
+            Card(
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: Icon(Icons.email),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: _senhaController,
+                      obscureText: !_mostrarSenha,
+                      decoration: InputDecoration(
+                        labelText: 'Senha',
+                        prefixIcon: Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _mostrarSenha
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _mostrarSenha = !_mostrarSenha;
+                            });
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
                         onPressed: () {
-                          setState(() {
-                            _mostrarSenha = !_mostrarSenha;
-                          });
+                          // Navegação para a tela de recuperação de senha
                         },
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        child: Text('Esqueceu a senha?'),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        // Navegação para a tela de recuperação de senha
-                      },
-                      child: Text('Esqueceu a senha?'),
-                    ),
-                  ),
-                  SizedBox(height: 24),
+                    SizedBox(height: 24),
 
-                  // Botão de login
-                  _isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : ElevatedButton(
-                        onPressed: _realizarLogin,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          minimumSize: Size(double.infinity, 0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                    // Botão de login
+                    _isLoading
+                        ? Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                          onPressed: _realizarLogin,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            minimumSize: Size(double.infinity, 0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'ENTRAR',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        child: Text(
-                          'ENTRAR',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                  SizedBox(height: 16),
+                    SizedBox(height: 16),
 
-                  // Link para cadastro
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Não tem uma conta?'),
-                      TextButton(
-                        onPressed: () {
-                          // Navegação para a tela de cadastro
-                        },
-                        child: Text('Cadastre-se'),
-                      ),
-                    ],
-                  ),
-
-                  // Separador
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Row(
+                    // Link para cadastro
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(child: Divider()),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('ou continue com'),
+                        Text('Não tem uma conta?'),
+                        TextButton(
+                          onPressed: () {
+                            // Navegação para a tela de cadastro
+                          },
+                          child: Text('Cadastre-se'),
                         ),
-                        Expanded(child: Divider()),
                       ],
                     ),
-                  ),
 
-                  // Botões de login social
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _socialLoginButton(Icons.g_mobiledata, 'Google'),
-                      _socialLoginButton(Icons.facebook, 'Facebook'),
-                    ],
-                  ),
-                ],
+                    // Separador
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Row(
+                        children: [
+                          Expanded(child: Divider()),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Text('ou continue com'),
+                          ),
+                          Expanded(child: Divider()),
+                        ],
+                      ),
+                    ),
+
+                    // Botões de login social
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _socialLoginButton(Icons.g_mobiledata, 'Google'),
+                        _socialLoginButton(Icons.facebook, 'Facebook'),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

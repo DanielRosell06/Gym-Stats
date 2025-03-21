@@ -49,8 +49,6 @@ class _AppScaffoldState extends State<AppScaffold> {
     switch (index) {
       case 0:
         return HomeContent();
-      case 1:
-        return LoginPage();
       case 2:
         return WorkoutRegistrationPage();
       case 3: // Assumindo que o botão Conta seja o índice 3
