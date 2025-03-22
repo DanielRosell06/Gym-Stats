@@ -48,13 +48,13 @@ class _AppScaffoldState extends State<AppScaffold> {
   Widget _getBodyForIndex(int index) {
     switch (index) {
       case 0:
-        return HomeContent();
+        return HomePage();
       case 2:
         return WorkoutRegistrationPage();
       case 3: // Assumindo que o botão Conta seja o índice 3
         return RegisterPage();
       default:
-        return HomeContent();
+        return HomePage();
     }
   }
 

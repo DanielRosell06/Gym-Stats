@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:gym_stats/auth_checker.dart';
+import 'package:gym_stats/auth_service.dart';
 
-class HomeContent extends StatelessWidget {
-  const HomeContent({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -641,6 +643,15 @@ class ExerciseImproveItem extends StatelessWidget {
               ),
               minHeight: 8,
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await AuthService.logout();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const AuthChecker()),
+              );
+            },
           ),
         ],
       ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gym_stats/auth_checker.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -27,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:3000/api/login'),
+        Uri.parse('http://10.0.2.2:3000/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'Email': _emailController.text,
@@ -40,6 +42,14 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         // Login bem sucedido
         _mostrarMensagem('Login feito com suscesso!');
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true); // Marca o usuário como logado
+
+        // 3. Redirecionar para a tela principal
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const AuthChecker()),
+        );
       } else {
         _mostrarMensagem(responseData['erro'] ?? 'Erro desconhecido');
       }

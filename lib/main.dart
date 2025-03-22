@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:gym_stats/auth_checker.dart';
 import 'package:provider/provider.dart';
 import 'theme_provider.dart';
 import 'app_scaffold.dart';
@@ -57,11 +58,7 @@ class MyApp extends StatelessWidget {
           surface: Color(0xFF121212),
         ),
       ),
-      home: AppScaffold(
-        // Scaffold base
-        title: 'Gym Stats',
-        body: HomeContent(), // Conteúdo da página inicial
-      ),
+      home: const AuthChecker(),
     );
   }
 }
