@@ -1,5 +1,6 @@
 // Agora, modifique a classe AppScaffold para gerenciar a navegação
 import 'package:flutter/material.dart';
+import 'package:gym_stats/my_account.dart';
 import 'package:gym_stats/signin_page.dart';
 import 'package:gym_stats/login_page.dart';
 import 'package:gym_stats/add_training.dart';
@@ -49,10 +50,10 @@ class _AppScaffoldState extends State<AppScaffold> {
     switch (index) {
       case 0:
         return HomePage();
-      case 2:
+      case 1:
         return WorkoutRegistrationPage();
       case 3: // Assumindo que o botão Conta seja o índice 3
-        return RegisterPage();
+        return MinhaContaPage();
       default:
         return HomePage();
     }
@@ -62,6 +63,8 @@ class _AppScaffoldState extends State<AppScaffold> {
     switch (index) {
       case 0:
         return 'Gym Stats';
+      case 1:
+        return 'Meus Treinos';
       case 3:
         return 'Minha Conta';
       default:

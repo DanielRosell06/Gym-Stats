@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_stats/auth_checker.dart';
+import 'package:gym_stats/auth_service.dart';
+import 'package:gym_stats/signin_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/api/login'),
+        Uri.parse('http://192.168.1.4:3000/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'Email': _emailController.text,
@@ -41,12 +43,12 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         // Login bem sucedido
-        _mostrarMensagem('Login feito com suscesso!');
+        _mostrarMensagem('Login feito com sucesso!', sucesso: true);
 
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true); // Marca o usuário como logado
+        // Armazena os dados do usuário
+        await AuthService.saveUserData(responseData['usuario']);
 
-        // 3. Redirecionar para a tela principal
+        // Redireciona para a tela principal
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const AuthChecker()),
         );
@@ -182,7 +184,11 @@ class _LoginPageState extends State<LoginPage> {
                         Text('Não tem uma conta?'),
                         TextButton(
                           onPressed: () {
-                            // Navegação para a tela de cadastro
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => RegisterPage(),
+                              ),
+                            );
                           },
                           child: Text('Cadastre-se'),
                         ),
