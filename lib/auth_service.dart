@@ -14,6 +14,7 @@ class AuthService {
     await prefs.setString('userId', userData['id'].toString());
     await prefs.setString('userName', userData['nome']);
     await prefs.setString('userEmail', userData['email']);
+    await prefs.setString('userTrainingStyle', userData['estiloTreino']);
   }
 
   // Recupera os dados do usuário
@@ -23,6 +24,7 @@ class AuthService {
       'id': prefs.getString('userId'),
       'nome': prefs.getString('userName'),
       'email': prefs.getString('userEmail'),
+      'estiloTreino': prefs.getString('userTrainingStyle'),
     };
   }
 
@@ -33,5 +35,6 @@ class AuthService {
     await prefs.remove('userId');
     await prefs.remove('userName');
     await prefs.remove('userEmail');
+    await prefs.remove('userTrainingStyle');
   }
 }

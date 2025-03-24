@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:gym_stats/auth_service.dart';
+import 'package:http/http.dart' as http;
 
 class WorkoutRegistrationPage extends StatefulWidget {
   const WorkoutRegistrationPage({super.key});
@@ -45,6 +49,60 @@ class _WorkoutRegistrationPageState extends State<WorkoutRegistrationPage> {
       'day': 'Sexta-feira',
     },
   ];
+
+  Future<void> _salvarTreino() async {
+    try {
+      // Obter o ID do usuário logado
+      final userData = await AuthService.getUserData();
+      final userId = userData['id'];
+
+      if (userId == null) {
+        throw Exception('Usuário não autenticado');
+      }
+
+      debugPrint(_selectedExercises.toString());
+
+      // Criar lista de índices dos exercícios selecionados
+      final List<int> selectedExerciseIndexes =
+          _selectedExercises
+              .map((exercise) => _availableExercises.indexOf(exercise))
+              .toList();
+
+      final response = await http.post(
+        Uri.parse('http://192.168.1.4:3000/api/treino'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'idUsuario': userId,
+          'nomeTreino': _workoutNameController.text,
+            'idExercicios': selectedExerciseIndexes,
+            'diaTreino': _selectedDay.substring(0, 3),
+        }),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              responseData['mensagem'] ?? 'Treino salvo com sucesso!',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+        // Limpa os campos após salvar
+        _workoutNameController.clear();
+        setState(() {
+          _selectedExercises = [];
+          _selectedDay = 'Segunda-feira'; // Ou seu valor padrão
+        });
+      } else {
+        throw Exception(responseData['erro'] ?? 'Falha ao salvar treino');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 
   // Estado para os exercícios selecionados no popup
   List<String> _selectedExercises = [];
@@ -357,19 +415,9 @@ class _WorkoutRegistrationPageState extends State<WorkoutRegistrationPage> {
                               onPressed: () {
                                 if (_workoutNameController.text.isNotEmpty &&
                                     dialogSelectedExercises.isNotEmpty) {
-                                  // Adicionar novo treino
-                                  setState(() {
-                                    _workouts.add({
-                                      'name': _workoutNameController.text,
-                                      'exercises': List<String>.from(
-                                        dialogSelectedExercises,
-                                      ),
-                                      'day': _selectedDay,
-                                    });
-                                  });
+                                  _salvarTreino();
                                   Navigator.pop(context);
                                 } else {
-                                  // Mostrar erro
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text(
@@ -482,8 +530,10 @@ class _WorkoutRegistrationPageState extends State<WorkoutRegistrationPage> {
                                 setStateDialog(() {
                                   if (isSelected) {
                                     dialogExercises.remove(exercise);
+                                    _selectedExercises.remove(exercise);
                                   } else {
                                     dialogExercises.add(exercise);
+                                    _selectedExercises.add(exercise);
                                   }
                                 });
                               },
@@ -515,17 +565,6 @@ class _WorkoutRegistrationPageState extends State<WorkoutRegistrationPage> {
     ).then((result) {
       searchController.dispose();
       return result;
-    });
-  }
-
-  void _addNewWorkout() {
-    // Adicionar à lista de estado
-    setState(() {
-      _workouts.add({
-        'name': _workoutNameController.text,
-        'exercises': List<String>.from(_selectedExercises),
-        'day': _selectedDay,
-      });
     });
   }
 

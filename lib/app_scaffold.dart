@@ -1,8 +1,6 @@
 // Agora, modifique a classe AppScaffold para gerenciar a navegação
 import 'package:flutter/material.dart';
 import 'package:gym_stats/my_account.dart';
-import 'package:gym_stats/signin_page.dart';
-import 'package:gym_stats/login_page.dart';
 import 'package:gym_stats/add_training.dart';
 import 'package:provider/provider.dart';
 import 'theme_provider.dart';

@@ -128,6 +128,47 @@ def postUsuario():
         return jsonify({'erro': f'Erro ao cadastrar usuário: {str(e)}'}), 500
 
 
+@app.route('/api/treino', methods=['POST'])
+def registerTraining():
+    
+    dados = request.get_json()  # Recebe dados via body (mais seguro)
+
+    nomeTreino = dados['nomeTreino']
+    idUsuario = dados['idUsuario']
+    idExercicios = dados['idExercicios']
+    
+    if not (dados['diaTreino'] is None):
+        diaTreino = dados['diaTreino']
+    else:
+        diaTreino = None
+
+
+    try:
+        treino = Treino(
+            NomeTreino=nomeTreino,
+            IdUsuario=idUsuario,
+            IdExercicios=idExercicios,
+            DiaSemana=diaTreino
+        )
+
+        db.session.add(treino)
+        db.session.commit()
+        
+        return jsonify({
+            'sucesso': True,
+            'treino': {
+                'id': treino.IdTreino,
+                'nome': treino.NomeTreino,
+                'idUsuario': treino.IdUsuario,
+                'idExercicios': treino.IdExercicios,
+                'diaSemana': treino.DiaSemana
+            }
+        }), 200  # Código 200 para sucesso
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'erro': f'Erro ao cadastrar usuário: {str(e)}'}), 500
+
 @app.route('/api/login', methods=['POST'])
 def getLogin():
     
@@ -153,7 +194,8 @@ def getLogin():
             'usuario': {
                 'id': usuario.IdUsuario,
                 'nome': usuario.NomeUsuario,
-                'email': usuario.Email
+                'email': usuario.Email,
+                'estiloTreino': usuario.EstiloTreino
                 # Nunca retorne a senha!
             }
         }), 200  # Código 200 para sucesso
