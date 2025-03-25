@@ -169,6 +169,30 @@ def registerTraining():
         db.session.rollback()
         return jsonify({'erro': f'Erro ao cadastrar usuário: {str(e)}'}), 500
 
+@app.route('/api/treino', methods=['GET'])
+def getTrainings():
+    IdUsuario = int(request.args.get('idUsuario'))
+    print(IdUsuario)
+    if not IdUsuario:
+        return jsonify({'erro': 'IdUsuario é obrigatório'}), 400
+
+    try:
+        treinos = Treino.query.filter_by(IdUsuario=int(IdUsuario)).all()
+        for treino in treinos:
+            treinosExerciciosTemp = []
+            for exercicio in treino.IdExercicios:
+                treinosExerciciosTemp.append(Exercicio.query.filter_by(IdExercicio=(exercicio + 1)).first().NomeExercicio)
+            treino.IdExercicios = treinosExerciciosTemp
+
+            
+        return jsonify([{
+            'name': treino.NomeTreino,
+            'exercises': treino.IdExercicios,
+            'day': treino.DiaSemana
+        } for treino in treinos])
+    except Exception as e:
+        return jsonify({'erro': f'Erro ao buscar treinos: {str(e)}'}), 500
+
 @app.route('/api/login', methods=['POST'])
 def getLogin():
     

@@ -13,42 +13,45 @@ class WorkoutRegistrationPage extends StatefulWidget {
 }
 
 class _WorkoutRegistrationPageState extends State<WorkoutRegistrationPage> {
+
   // Lista de treinos de exemplo
-  final List<Map<String, dynamic>> _workouts = [
-    {
-      'name': 'Treino A - Peito, Ombro e Tríceps',
-      'exercises': [
-        'Supino Reto',
-        'Desenvolvimento',
-        'Tríceps Corda',
-        'Crucifixo',
-        'Elevação Lateral',
-      ],
-      'day': 'Segunda-feira',
-    },
-    {
-      'name': 'Treino B - Costas e Bíceps',
-      'exercises': [
-        'Puxada Frontal',
-        'Remada Curvada',
-        'Rosca Direta',
-        'Pulldown',
-        'Rosca Martelo',
-      ],
-      'day': 'Quarta-feira',
-    },
-    {
-      'name': 'Treino C - Pernas',
-      'exercises': [
-        'Agachamento',
-        'Leg Press',
-        'Cadeira Extensora',
-        'Mesa Flexora',
-        'Panturrilha',
-      ],
-      'day': 'Sexta-feira',
-    },
-  ];
+  final List<Map<String, dynamic>> _workouts = [];
+
+  Future<void> _carregarTreinos() async {
+    try {
+      // Obter o ID do usuário logado
+      final userData = await AuthService.getUserData();
+      final userId = userData['id'];
+
+      if (userId == null) {
+        throw Exception('Usuário não autenticado');
+      }
+
+      final response = await http.get(
+        Uri.parse('http://192.168.1.4:3000/api/treino?idUsuario=$userId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          _workouts.clear();
+          _workouts.addAll(List<Map<String, dynamic>>.from(responseData));
+        });
+      } else {
+        throw Exception(responseData['erro'] ?? 'Falha ao salvar treino');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarTreinos();
+  }
 
   Future<void> _salvarTreino() async {
     try {
@@ -59,8 +62,6 @@ class _WorkoutRegistrationPageState extends State<WorkoutRegistrationPage> {
       if (userId == null) {
         throw Exception('Usuário não autenticado');
       }
-
-      debugPrint(_selectedExercises.toString());
 
       // Criar lista de índices dos exercícios selecionados
       final List<int> selectedExerciseIndexes =
@@ -605,120 +606,134 @@ class _WorkoutRegistrationPageState extends State<WorkoutRegistrationPage> {
         const SizedBox(height: 16),
 
         // Lista de treinos existentes
-        ListView.builder(
+        _workouts.isEmpty
+            ? Center(
+          child: Text(
+            'Você ainda não registrou nenhum treino',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
+                ),
+          ),
+              )
+            : ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: _workouts.length,
           itemBuilder: (context, index) {
             final workout = _workouts[index];
             // Limitar a 4 exercícios para exibição
-            final displayExercises =
-                workout['exercises'].length > 4
-                    ? workout['exercises'].sublist(0, 4)
-                    : workout['exercises'];
+            final displayExercises = workout['exercises'].length > 4
+                ? workout['exercises'].sublist(0, 4)
+                : workout['exercises'];
 
             return Card(
               margin: const EdgeInsets.only(bottom: 16),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            workout['name'],
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.primary.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            workout['day'],
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children:
-                          displayExercises.map<Widget>((exercise) {
-                            return ExerciseChip(name: exercise);
-                          }).toList(),
-                    ),
-                    if (workout['exercises'].length > 4) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        '+ ${workout['exercises'].length - 4} exercícios',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        OutlinedButton.icon(
-                          onPressed: () {
-                            // Implementar edição de treino
-                          },
-                          icon: const Icon(Icons.edit),
-                          label: const Text('Editar'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            side: BorderSide(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            // Implementar iniciar treino
-                          },
-                          icon: const Icon(Icons.fitness_center),
-                          label: const Text('Iniciar'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+              child: Text(
+                workout['name'],
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+                  ),
+                  Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 6,
+              ),
+              decoration: BoxDecoration(
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary
+                    .withOpacity(0.2),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                workout['day'],
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color:
+                Theme.of(context).colorScheme.primary,
+                ),
+              ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: displayExercises
+              .map<Widget>((exercise) {
+                return ExerciseChip(name: exercise);
+              })
+              .toList(),
+              ),
+              if (workout['exercises'].length > 4) ...[
+                const SizedBox(height: 8),
+                Text(
+                  '+ ${workout['exercises'].length - 4} exercícios',
+                  style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton.icon(
+              onPressed: () {
+                // Implementar edição de treino
+              },
+              icon: const Icon(Icons.edit),
+              label: const Text('Editar'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor:
+                    Theme.of(context).colorScheme.primary,
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton.icon(
+              onPressed: () {
+                // Implementar iniciar treino
+              },
+              icon: const Icon(Icons.fitness_center),
+              label: const Text('Iniciar'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+                  ),
+                ],
+              ),
+            ],
                 ),
               ),
             );
           },
-        ),
+              ),
         const SizedBox(height: 80), // Espaço para o bottom navigation bar
       ],
     );
