@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_stats/my_account.dart';
 import 'package:gym_stats/add_training.dart';
+import 'package:gym_stats/register_training.dart';
 import 'package:provider/provider.dart';
 import 'theme_provider.dart';
 import 'home-page.dart';
@@ -50,7 +51,9 @@ class _AppScaffoldState extends State<AppScaffold> {
         return HomePage();
       case 1:
         return WorkoutRegistrationPage();
-      case 3: // Assumindo que o botão Conta seja o índice 3
+      case 2:
+        return SessionRegistrationPage();
+      case 4: // Assumindo que o botão Conta seja o índice 3
         return MinhaContaPage();
       default:
         return HomePage();
@@ -63,7 +66,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         return 'Gym Stats';
       case 1:
         return 'Meus Treinos';
-      case 3:
+      case 4:
         return 'Minha Conta';
       default:
         return 'Gym Stats';
@@ -189,17 +192,23 @@ class CustomBottomNavigationBar extends StatelessWidget {
         showSelectedLabels: true,
         showUnselectedLabels: true,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Início'),
           BottomNavigationBarItem(
             icon: Icon(Icons.fitness_center),
             label: 'Treinos',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.insert_chart),
-            label: 'Progresso',
+            icon: Icon(Icons.add_box_rounded, size: 40, color: Colors.orange),
+            label: 'Registrar',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
+            icon: Icon(Icons.bar_chart),
+            label: 'Registros',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
             label: 'Conta',
           ),
         ],

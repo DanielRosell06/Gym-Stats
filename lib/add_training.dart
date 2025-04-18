@@ -417,6 +417,7 @@ class _WorkoutRegistrationPageState extends State<WorkoutRegistrationPage> {
                                 if (_workoutNameController.text.isNotEmpty &&
                                     dialogSelectedExercises.isNotEmpty) {
                                   _salvarTreino();
+                                  _carregarTreinos();
                                   Navigator.pop(context);
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
