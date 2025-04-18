@@ -116,7 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       // Enviar requisição POST para a API
       final response = await http.post(
-        Uri.parse('http://192.168.1.4:3000/api/usuario'),
+        Uri.parse('http://192.168.0.137:3000/api/usuario'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

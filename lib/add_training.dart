@@ -28,7 +28,7 @@ class _WorkoutRegistrationPageState extends State<WorkoutRegistrationPage> {
       }
 
       final response = await http.get(
-        Uri.parse('http://192.168.1.4:3000/api/treino?idUsuario=$userId'),
+        Uri.parse('http://192.168.0.137:3000/api/treino?idUsuario=$userId'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -70,7 +70,7 @@ class _WorkoutRegistrationPageState extends State<WorkoutRegistrationPage> {
               .toList();
 
       final response = await http.post(
-        Uri.parse('http://192.168.1.4:3000/api/treino'),
+        Uri.parse('http://192.168.0.137:3000/api/treino'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'idUsuario': userId,

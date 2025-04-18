@@ -179,15 +179,14 @@ def getTrainings():
     try:
         treinos = Treino.query.filter_by(IdUsuario=int(IdUsuario)).all()
         for treino in treinos:
-            treinosExerciciosTemp = []
+            treino.treinosExerciciosTemp = []
             for exercicio in treino.IdExercicios:
-                treinosExerciciosTemp.append(Exercicio.query.filter_by(IdExercicio=(exercicio + 1)).first().NomeExercicio)
-            treino.IdExercicios = treinosExerciciosTemp
+                treino.treinosExerciciosTemp.append(Exercicio.query.filter_by(IdExercicio=(exercicio + 1)).first().NomeExercicio)
 
             
         return jsonify([{
             'name': treino.NomeTreino,
-            'exercises': treino.IdExercicios,
+            'exercises': treino.treinosExerciciosTemp,
             'day': treino.DiaSemana
         } for treino in treinos])
     except Exception as e:
