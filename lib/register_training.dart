@@ -51,8 +51,11 @@ class _SessionRegistrationPageState extends State<SessionRegistrationPage> {
           _workouts.addAll(List<Map<String, dynamic>>.from(responseData));
           
           // Verificar se existe um treino para o dia atual
-          final weekdays = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+          final weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
           final today = weekdays[DateTime.now().weekday % 7]; // ajuste para iniciar em domingo
+
+          debugPrint('Dia da semana: $today');
+          debugPrint(_workouts[0]['day'].toString());
           
           _dailyWorkout = _workouts.firstWhere(
             (workout) => workout['day'] == today,
@@ -279,7 +282,7 @@ class _SessionRegistrationPageState extends State<SessionRegistrationPage> {
       case 'qua': return 'Quarta-feira';
       case 'qui': return 'Quinta-feira';
       case 'sex': return 'Sexta-feira';
-      case 'sab': return 'Sábado';
+      case 'sáb': return 'Sábado';
       default: return 'Não definido';
     }
   }
