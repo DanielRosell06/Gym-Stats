@@ -39,7 +39,7 @@ class _SessionRegistrationPageState extends State<SessionRegistrationPage> {
       }
 
       final response = await http.get(
-        Uri.parse('http://192.168.0.137:3000/api/treino?idUsuario=$userId'),
+        Uri.parse('http://177.8.110.40:3000/api/treino?idUsuario=$userId'),
         headers: {'Content-Type': 'application/json'},
       );
 
